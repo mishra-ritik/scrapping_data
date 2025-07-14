@@ -3,7 +3,7 @@ name: Auto comment on Push
 on: 
   push: 
     branches:
-      - maind
+      - main
 
 jobs:
   comment_on_commit:
@@ -11,6 +11,7 @@ jobs:
 
     env:
       DEFAULT_COMMENT: "Default Analysis: This is default comment --> Hey"
+      json_data: "{'componet': 'hello', 'value':true, 'project_name':'scrapper_project'}"
 
     steps:
       - name: Post Comment on latest commit
@@ -20,5 +21,5 @@ jobs:
           curl -L -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"${DEFAULT_COMMENT}\"}" \
+            -d "{\"body\": \"${json_data}\"}" \
             "$COMMENT_URL"
