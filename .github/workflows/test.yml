@@ -3,7 +3,7 @@ name: Auto comment on Push
 on: 
   push: 
     branches:
-      - main
+      - maind
 
 jobs:
   comment_on_commit:
