@@ -13,31 +13,31 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     env:
-      json_data: '{"component": "hello", "value": true, "project_name": "scrapper_project"}'
+      json_comment: "Default Push Comment: Component: hello, Project: scrapper_project"
     steps:
       - name: Comment on commit (Push event)
         run: |
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments"
 
-          curl -L -X POST \
+          curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"${json_data}\"}" \
+            -d "{\"body\": \"${json_comment}\"}" \
             "$COMMENT_URL"
 
   comment_on_pr:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
-      json_data: '{"component": "hello", "value": true, "project_name": "scrapper_project"}'
+      json_comment: "PR Review: Component: hello, Project: scrapper_project"
     steps:
       - name: Comment on pull request
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-          curl -L -X POST \
+          curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"${json_data}\"}" \
+            -d "{\"body\": \"${json_comment}\"}" \
             "$COMMENT_URL"
