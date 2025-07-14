@@ -39,5 +39,5 @@ EOF
           curl -L -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": $ESCAPED_JSON}" \
+            -d "{\"body\": ${ESCAPED_JSON}" \
             "$COMMENT_URL"

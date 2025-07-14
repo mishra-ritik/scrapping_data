@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DEFAULT_COMMENT: "Default Analysis: This is default comment"
+      DEFAULT_COMMENT: "Default Analysis: This is default comment --> Hey"
 
     steps:
       - name: Post Comment on latest commit
