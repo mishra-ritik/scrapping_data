@@ -11,7 +11,7 @@ jobs:
 
     env:
       DEFAULT_COMMENT: "Default Analysis: This is default comment --> Hey"
-      json_data: "{'componet': 'hello', 'value':true, 'project_name':'scrapper_project'}"
+      json_data: '{"componet": "hello", "value":true, "project_name":"scrapper_project"}'
 
     steps:
       - name: Post Comment on latest commit
