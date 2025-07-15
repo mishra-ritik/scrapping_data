@@ -1,29 +1,29 @@
 name: Auto comment on Push and Pull Request
 
 on: 
-  push:
-    branches:
-      - main
-  # pull_request:
+  # push:
   #   branches:
   #     - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  comment_on_push:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    env:
-      json_comment: "Default Push Comment: Component: hello, Project: scrapper_project"
-    steps:
-      - name: Comment on Push event
-        run: |
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments"
+  # comment_on_push:
+  #   if: github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     json_comment: "Default Push Comment: Component: hello, Project: scrapper_project"
+  #   steps:
+  #     - name: Comment on Push event
+  #       run: |
+  #         COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments"
 
-          curl -i -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"body\": \"${json_comment}\"}" \
-            "$COMMENT_URL"
+  #         curl -i -X POST \
+  #           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+  #           -H "Content-Type: application/json" \
+  #           -d "{\"body\": \"${json_comment}\"}" \
+  #           "$COMMENT_URL"
 
   comment_on_pr:
     if: github.event_name == 'pull_request'
