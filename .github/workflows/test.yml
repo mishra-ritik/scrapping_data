@@ -8,6 +8,7 @@ on:
     branches:
       - main
 
+
 jobs:
   # comment_on_push:
   #   if: github.event_name == 'push'
@@ -29,7 +30,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     env:
-      json_data: '{"component": "hello", "value": true, "project_name": "scrapper_project"}'
+      json_comment: "PR Review: Component: hello, Project: scrapper_project"
     steps:
       - name: Run Code Analysis
         uses: sonarsource/sonarqube-scan-action@v5.2.0
@@ -44,10 +45,10 @@ jobs:
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-          curl -L -X POST \
+          curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"${json_data}\"}" \
+            -d "{\"body\": \"${json_comment}\"}" \
             "$COMMENT_URL"
 
   

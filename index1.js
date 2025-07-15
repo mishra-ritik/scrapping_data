@@ -162,7 +162,7 @@ async function fetchMeasures() {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Authorization': 'Basic c3FwXzNlMTNkMjZkYTZhYTM1NmI2MmE3OTlmMjEwZTQ2OTc2MDVlNWUwODI6',
+                'Authorization': 'Basic c3FhXzVjM2QwODUwZWJiZWViMjBlMWU5NDBhNDNjN2JlYzA0NWRkZWI0OGQ6',
                 'Host': 'sonarqube.paltechops.org',
                 'Accept': 'application/json'
             }
