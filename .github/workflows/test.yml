@@ -92,5 +92,5 @@ jobs:
           curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"$BODY\"}" \
+            -d "$JSON" \
             "$COMMENT_URL"
