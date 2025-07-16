@@ -9,13 +9,13 @@ on:
 
 jobs:
 
-  test_sonarqube_connection:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check HTTP access to sonarqube 
-        run: |
-          curl -v http://54.158.35.213:9000 || echo "connection failed"
-          echo "Hello Jee"
+  # test_sonarqube_connection:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check HTTP access to sonarqube 
+  #       run: |
+  #         curl -v http://54.158.35.213:9000 || echo "connection failed"
+  #         echo "Hello Jee"
 
   comment_on_pr:
     if: github.event_name == 'pull_request'
