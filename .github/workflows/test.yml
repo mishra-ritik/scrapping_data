@@ -81,8 +81,7 @@ jobs:
           - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
           - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
           
-          echo "Hello jee body"
-          echo "$BODY"
+          
 
           
           [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
