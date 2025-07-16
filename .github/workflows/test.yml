@@ -2,23 +2,88 @@ name: Auto comment on Push and Pull Request
 
 on: 
   pull_request:
-    branches: []
+    branches: 
+      - main
+      - dev
 
 jobs:
-
   comment_on_pr:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    env:
-      json_comment: "PR Review: Component: hello, Project: scrapper_project"
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Code Analysis
+        uses: sonarsource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
+          SONAR_HOST_URL: http://54.158.35.213:9000
+        with:
+          args: >
+            -Dsonar.projectKey=scrapping_poc
+            -Dsonar.sources=.
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
+            -Dsonar.login=${{ env.SONAR_TOKEN }}
+            -Dsonar.ws.timeout=300
+            -Dsonar.ce.ws.timeout=300
+
+      - name: Fetch SonarQube metrics
+        env:
+          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
+          SONAR_HOST_URL: http://54.158.35.213:9000
+        id: sonarqube
+        run: |
+          echo "Fetching SonarQube metrics..."
+          RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
+            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots")
+          
+          echo "SonarQube raw response: $RESPONSE"
+          
+          ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
+          NEW_VIOLATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
+          NEW_COVERAGE=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_coverage") | .period.value // "0.0"')
+          NEW_DUP_LINES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
+          NEW_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
+
+
+          echo "Parsed metrics:"
+          echo "ALERT_STATUS=$ALERT_STATUS"
+          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS"
+          echo "NEW_COVERAGE=$NEW_COVERAGE"
+          echo "NEW_DUP_LINES=$NEW_DUP_LINES"
+          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS"
+
+          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
+          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS" >> $GITHUB_ENV
+          echo "NEW_COVERAGE=$NEW_COVERAGE" >> $GITHUB_ENV
+          echo "NEW_DUP_LINES=$NEW_DUP_LINES" >> $GITHUB_ENV
+          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS" >> $GITHUB_ENV
+
+          if [[ "$ALERT_STATUS" == "ERROR" ]]; then
+            echo "SONAR_STATUS_ICON=🚨" >> $GITHUB_ENV
+            echo "SONAR_STATUS_MESSAGE=❌ Quality Gate FAILED" >> $GITHUB_ENV
+          else
+            echo "SONAR_STATUS_ICON=✅" >> $GITHUB_ENV
+            echo "SONAR_STATUS_MESSAGE=🎉 Quality Gate PASSED" >> $GITHUB_ENV
+          fi
+
       - name: Comment on pull request
         run: |
+          echo "Adding comment on pull request"
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+          BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }}
+          - **Quality Gate:** ${{ env.ALERT_STATUS }}
+          - **New Violations:** ${{ env.NEW_VIOLATIONS }}
+          - **New Coverage:** ${{ env.NEW_COVERAGE }}%
+          - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
+          - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+          
+          [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
+          "
 
           curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{\"body\": \"${json_comment}\"}" \
+            -d "{\"body\": \"$BODY\"}" \
             "$COMMENT_URL"
