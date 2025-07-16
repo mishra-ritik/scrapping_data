@@ -45,6 +45,7 @@ jobs:
           NEW_DUP_LINES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
           NEW_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
 
+
           echo "Parsed metrics:"
           echo "ALERT_STATUS=$ALERT_STATUS"
           echo "NEW_VIOLATIONS=$NEW_VIOLATIONS"
