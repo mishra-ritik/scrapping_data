@@ -78,11 +78,13 @@ jobs:
           # - **New Coverage:** ${{ env.NEW_COVERAGE }}%
           # - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
           # - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+          # [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
+          # "
+
           BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }} - Quality Gate: ${{ env.ALERT_STATUS }}, New Violations: ${{ env.NEW_VIOLATIONS }}, New Coverage: ${{ env.NEW_COVERAGE }}%, New Duplicated Lines: ${{ env.NEW_DUP_LINES }}%, New Security Hotspots: ${{ env.NEW_HOTSPOTS }}. [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)"
 
-          
-          [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
-          "
+           # Use jq to safely encode JSON
+          JSON=$(jq -n --arg body "$BODY" '{body: $body}')
 
           curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
