@@ -78,7 +78,7 @@ jobs:
       - name: Fetch SonarQube metrics
         id: sonarqube
         run: |
-          AUTH=$(echo "${{ secrets.SONAR_TOKEN }}:" | base64)
+          AUTH=$(echo "${{ env.SONAR_TOKEN }}:" | base64)
           RESPONSE=$(curl -s -X GET \
             --location "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots" \
             --header "Authorization: Basic $AUTH")
