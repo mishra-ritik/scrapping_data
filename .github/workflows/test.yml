@@ -83,7 +83,7 @@ jobs:
           [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
           "
 
-          echo "Hello jee"
+          echo "Hello jee Kaise ho saare"
           echo "$BODY"
 
           curl -i -X POST \
