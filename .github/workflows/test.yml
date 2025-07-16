@@ -72,12 +72,14 @@ jobs:
           echo "Adding comment on pull request"
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
-          BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }}
-          - **Quality Gate:** ${{ env.ALERT_STATUS }}
-          - **New Violations:** ${{ env.NEW_VIOLATIONS }}
-          - **New Coverage:** ${{ env.NEW_COVERAGE }}%
-          - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
-          - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+          # BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }}
+          # - **Quality Gate:** ${{ env.ALERT_STATUS }}
+          # - **New Violations:** ${{ env.NEW_VIOLATIONS }}
+          # - **New Coverage:** ${{ env.NEW_COVERAGE }}%
+          # - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
+          # - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+          BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }} - Quality Gate: ${{ env.ALERT_STATUS }}, New Violations: ${{ env.NEW_VIOLATIONS }}, New Coverage: ${{ env.NEW_COVERAGE }}%, New Duplicated Lines: ${{ env.NEW_DUP_LINES }}%, New Security Hotspots: ${{ env.NEW_HOTSPOTS }}. [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)"
+
           
           [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
           "
