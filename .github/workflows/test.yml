@@ -68,6 +68,9 @@ jobs:
 
       - name: Comment on pull request
         run: |
+          echo "hello"
+          echo "world"
+          echo "testing PR"
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
           BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }}
