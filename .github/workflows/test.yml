@@ -19,8 +19,7 @@ jobs:
           SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
           SONAR_HOST_URL: http://34.203.199.42:9000
         with:
-          args: >
-            -Dsonar.projectKey=scrapping_poc
+          args: -Dsonar.projectKey=scrapping_poc
       - name: Comment on pull request
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
