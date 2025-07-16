@@ -78,19 +78,18 @@ jobs:
       - name: Fetch SonarQube metrics
         id: sonarqube
         run: |
-          AUTH=$(echo "${{ env.SONAR_TOKEN }}:" | base64)
-          RESPONSE=$(curl -s -X GET \
-            --location "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots" \
-            --header "Authorization: Basic $AUTH")
+          echo "📡 Fetching SonarQube metrics..."
+          RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
+            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots")
           
-          echo "SonarQube response: $RESPONSE"
+          echo "SonarQube raw response: $RESPONSE"
           
           # Extract metrics
-          ALERT_STATUS=$(echo $RESPONSE | jq -r '.component.measures[] | select(.metric=="alert_status") | .value')
-          NEW_VIOLATIONS=$(echo $RESPONSE | jq -r '.component.measures[] | select(.metric=="new_violations") | .value')
-          NEW_COVERAGE=$(echo $RESPONSE | jq -r '.component.measures[] | select(.metric=="new_coverage") | .value')
-          NEW_DUP_LINES=$(echo $RESPONSE | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .value')
-          NEW_HOTSPOTS=$(echo $RESPONSE | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .value')
+          ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
+          NEW_VIOLATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
+          NEW_COVERAGE=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_coverage") | .period.value // "0.0"')
+          NEW_DUP_LINES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
+          NEW_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
           echo "NEW_VIOLATIONS=$NEW_VIOLATIONS" >> $GITHUB_ENV
@@ -98,23 +97,46 @@ jobs:
           echo "NEW_DUP_LINES=$NEW_DUP_LINES" >> $GITHUB_ENV
           echo "NEW_HOTSPOTS=$NEW_HOTSPOTS" >> $GITHUB_ENV
 
-      - name: Comment on pull request
-        run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
-          BODY="### SonarQube Code Analysis 🚨
-          - **Quality Gate:** ${{ env.ALERT_STATUS }}
-          - **New Violations:** ${{ env.NEW_VIOLATIONS }}
-          - **New Coverage:** ${{ env.NEW_COVERAGE }}%
-          - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
-          - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+          echo "✅ Parsed metrics:"
+          echo "ALERT_STATUS=$ALERT_STATUS"
+          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS"
+          echo "NEW_COVERAGE=$NEW_COVERAGE"
+          echo "NEW_DUP_LINES=$NEW_DUP_LINES"
+          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS"
 
-          [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
-          "
+          # Export to GitHub env for next steps
+          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
+          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS" >> $GITHUB_ENV
+          echo "NEW_COVERAGE=$NEW_COVERAGE" >> $GITHUB_ENV
+          echo "NEW_DUP_LINES=$NEW_DUP_LINES" >> $GITHUB_ENV
+          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS" >> $GITHUB_ENV
 
-          curl -i -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"body\": \"$BODY\"}" \
-            "$COMMENT_URL"
+          # Determine status icon
+          if [[ "$ALERT_STATUS" == "ERROR" ]]; then
+            echo "SONAR_STATUS_ICON=🚨" >> $GITHUB_ENV
+            echo "SONAR_STATUS_MESSAGE=❌ Quality Gate FAILED" >> $GITHUB_ENV
+          else
+            echo "SONAR_STATUS_ICON=✅" >> $GITHUB_ENV
+            echo "SONAR_STATUS_MESSAGE=🎉 Quality Gate PASSED" >> $GITHUB_ENV
+          fi
+
+      # - name: Comment on pull request
+      #   run: |
+      #     PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+      #     COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+      #     BODY="### SonarQube Code Analysis 🚨
+      #     - **Quality Gate:** ${{ env.ALERT_STATUS }}
+      #     - **New Violations:** ${{ env.NEW_VIOLATIONS }}
+      #     - **New Coverage:** ${{ env.NEW_COVERAGE }}%
+      #     - **New Duplicated Lines:** ${{ env.NEW_DUP_LINES }}%
+      #     - **New Security Hotspots:** ${{ env.NEW_HOTSPOTS }}
+
+      #     [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)
+      #     "
+
+      #     curl -i -X POST \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Content-Type: application/json" \
+      #       -d "{\"body\": \"$BODY\"}" \
+      #       "$COMMENT_URL"
   
