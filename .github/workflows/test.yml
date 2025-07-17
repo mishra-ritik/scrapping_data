@@ -3,7 +3,6 @@ name: Auto comment on Push and Pull Request
 on: 
   pull_request:
     branches: 
-      - main
       - dev
 
 jobs:
