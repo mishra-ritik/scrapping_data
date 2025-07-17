@@ -59,18 +59,11 @@ jobs:
 
           LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
 
-          # Try to PATCH (update) the label, if it doesn't exist, then POST (create) it
-          curl -s -X PATCH "$LABEL_API_URL" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" \
-            || \
           curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
 
-          # Remove old SonarQube labels
           for label in sonarqube_failed sonarqube_passed; do
             curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
