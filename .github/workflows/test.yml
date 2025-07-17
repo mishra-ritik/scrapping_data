@@ -56,4 +56,25 @@ jobs:
             echo "SONAR_STATUS_MESSAGE=🎉 Quality Gate PASSED" >> $GITHUB_ENV
           fi
 
+
+      - name: Label PR based on SonarQube result
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+
+          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+            LABEL_NAME="sonarqube_failed"
+          else
+            LABEL_NAME="sonarqube_passed"
+          fi
+
+          LABEL_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
+          JSON_LABEL=$(jq -n --arg label "$LABEL_NAME" '[$label]')
+
+          echo "Adding label $LABEL_NAME to PR #$PR_NUMBER"
+
+          curl -X POST "$LABEL_URL" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_LABEL"
+
       
