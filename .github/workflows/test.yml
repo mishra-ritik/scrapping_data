@@ -42,7 +42,7 @@ jobs:
           echo "Parsed metrics:"
           echo "ALERT_STATUS=$ALERT_STATUS"
 
-          
+          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
 
 
       - name: Label PR based on SonarQube result
