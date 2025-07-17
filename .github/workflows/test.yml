@@ -39,6 +39,7 @@ jobs:
           echo "SonarQube raw response: $RESPONSE"
           
           ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
+          echo "Alter Status result: ${ALERT_STATUS} "
 
 
           echo "Parsed metrics:"
