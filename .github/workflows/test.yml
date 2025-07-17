@@ -45,34 +45,40 @@ jobs:
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
 
 
-      - name: Label PR based on SonarQube result
+      - name: Create/update & apply SonarQube label
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
           if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
             LABEL_NAME="sonarqube_failed"
-            LABEL_COLOR="d73a4a"  
-            LABEL_DESCRIPTION="SonarQube Quality Gate Failed ❌"
+            LABEL_COLOR="d73a4a"  # red
           else
             LABEL_NAME="sonarqube_passed"
-            LABEL_COLOR="0e8a16"
+            LABEL_COLOR="0e8a16"  # green
           fi
 
-          LABEL_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
+          LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
 
-          for label in sonarqube_failed sonarqube_passed; do
-            curl -s -X DELETE "$LABEL_URL/$label" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              || true  # ignore if label wasn't there
-          done
-
-          JSON_LABEL=$(jq -n --arg label "$LABEL_NAME" '[$label]')
-
-          echo "Adding label to PR: $LABEL_NAME to PR #$PR_NUMBER"
-
-          curl -X POST "$LABEL_URL" \
+          # Try to PATCH (update) the label, if it doesn't exist, then POST (create) it
+          curl -s -X PATCH "$LABEL_API_URL" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "$JSON_LABEL"
+            -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" \
+            || \
+          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
+
+          # Remove old SonarQube labels
+          for label in sonarqube_failed sonarqube_passed; do
+            curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
+          done
+
+          # Apply the current label
+          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg label "$LABEL_NAME" '[$label]')"
 
