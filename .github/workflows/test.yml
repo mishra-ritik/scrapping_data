@@ -83,6 +83,7 @@ jobs:
 
           echo "Hello jee Kaise ho saare"
           echo "$BODY"
+          echo "$JSON"
 
           curl -i -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
