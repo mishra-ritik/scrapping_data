@@ -34,12 +34,12 @@ jobs:
         run: |
           echo "Fetching SonarQube metrics..."
           RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status)
+            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots")
           
           echo "SonarQube raw response: $RESPONSE"
           
           ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-
+          echo "Alter Status result: ${ALERT_STATUS} "
 
 
           echo "Parsed metrics:"
