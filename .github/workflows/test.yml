@@ -56,6 +56,14 @@ jobs:
           fi
 
           LABEL_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
+
+          for label in sonarqube_failed sonarqube_passed; do
+            curl -s -X DELETE "$LABEL_URL/$label" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              || true  # ignore if label wasn't there
+          done
+
           JSON_LABEL=$(jq -n --arg label "$LABEL_NAME" '[$label]')
 
           echo "Adding label $LABEL_NAME to PR #$PR_NUMBER"
