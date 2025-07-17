@@ -60,7 +60,7 @@ jobs:
 
           JSON_LABEL=$(jq -n --arg label "$LABEL_NAME" '[$label]')
 
-          echo "Adding label $LABEL_NAME to PR #$PR_NUMBER"
+          echo "Adding label to PR: $LABEL_NAME to PR #$PR_NUMBER"
 
           curl -X POST "$LABEL_URL" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
