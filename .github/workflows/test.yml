@@ -51,8 +51,11 @@ jobs:
 
           if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
             LABEL_NAME="sonarqube_failed"
+            LABEL_COLOR="d73a4a"  
+            LABEL_DESCRIPTION="SonarQube Quality Gate Failed ❌"
           else
             LABEL_NAME="sonarqube_passed"
+            LABEL_COLOR="0e8a16"
           fi
 
           LABEL_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
