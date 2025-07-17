@@ -40,24 +40,13 @@ jobs:
           echo "SonarQube raw response: $RESPONSE"
           
           ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-          NEW_VIOLATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
-          NEW_COVERAGE=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_coverage") | .period.value // "0.0"')
-          NEW_DUP_LINES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
-          NEW_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
 
 
           echo "Parsed metrics:"
           echo "ALERT_STATUS=$ALERT_STATUS"
-          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS"
-          echo "NEW_COVERAGE=$NEW_COVERAGE"
-          echo "NEW_DUP_LINES=$NEW_DUP_LINES"
-          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS"
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
-          echo "NEW_VIOLATIONS=$NEW_VIOLATIONS" >> $GITHUB_ENV
-          echo "NEW_COVERAGE=$NEW_COVERAGE" >> $GITHUB_ENV
-          echo "NEW_DUP_LINES=$NEW_DUP_LINES" >> $GITHUB_ENV
-          echo "NEW_HOTSPOTS=$NEW_HOTSPOTS" >> $GITHUB_ENV
+
 
           if [[ "$ALERT_STATUS" == "ERROR" ]]; then
             echo "SONAR_STATUS_ICON=🚨" >> $GITHUB_ENV
