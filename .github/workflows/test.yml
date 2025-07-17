@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "Fetching SonarQube metrics..."
           RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots")
+            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations")
           
           echo "SonarQube raw response: $RESPONSE"
           
