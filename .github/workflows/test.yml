@@ -66,25 +66,25 @@ jobs:
             echo "SONAR_STATUS_MESSAGE=🎉 Quality Gate PASSED" >> $GITHUB_ENV
           fi
 
-      - name: Comment on pull request
+      - name: Label PR based on SonarQube result
         run: |
-          echo "hello"
-          echo "world"
-          echo "testing PR"
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-          BODY="### SonarQube Code Analysis ${{ env.SONAR_STATUS_ICON }} - Quality Gate: ${{ env.ALERT_STATUS }}, New Violations: ${{ env.NEW_VIOLATIONS }}, New Coverage: ${{ env.NEW_COVERAGE }}%, New Duplicated Lines: ${{ env.NEW_DUP_LINES }}%, New Security Hotspots: ${{ env.NEW_HOTSPOTS }}. [View full report](${{ env.SONAR_HOST_URL }}/dashboard?id=scrapping_poc)"
-          
-           # Use jq to safely encode JSON
-          JSON=$(jq -n --arg body "$BODY" '{body: $body}')
+          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+            LABEL_NAME="sonarqube_failed"
+          else
+            LABEL_NAME="sonarqube_passed"
+          fi
 
-          echo "Hello jee Kaise ho saare..."
-          echo "$BODY"
-          echo "$JSON"
+          LABEL_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
+          JSON_LABEL=$(jq -n --arg label "$LABEL_NAME" '[$label]')
 
-          curl -i -X POST \
+          echo "Adding label $LABEL_NAME to PR #$PR_NUMBER"
+
+          curl -X POST "$LABEL_URL" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "$JSON" \
-            "$COMMENT_URL"
+            -d "$JSON_LABEL"
+
+
+    
