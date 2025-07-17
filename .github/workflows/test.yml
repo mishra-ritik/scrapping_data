@@ -44,17 +44,17 @@ jobs:
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
 
-
-      - name: Create/update & apply SonarQube label
+  
+      - name: Label PR based on SonarQube result
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             LABEL_NAME="sonarqube_failed"
-            LABEL_COLOR="d73a4a"  # red
+            LABEL_COLOR="d73a4a" 
           else
             LABEL_NAME="sonarqube_passed"
-            LABEL_COLOR="0e8a16"  # green
+            LABEL_COLOR="0e8a16"  
           fi
 
           LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
