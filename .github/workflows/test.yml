@@ -23,8 +23,6 @@ jobs:
             -Dsonar.sources=.
             -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
             -Dsonar.login=${{ env.SONAR_TOKEN }}
-            -Dsonar.ws.timeout=300
-            -Dsonar.ce.ws.timeout=300
 
       - name: Fetch SonarQube metrics
         env:
