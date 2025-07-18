@@ -49,7 +49,7 @@ jobs:
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             LABEL_NAME="sonarqube_failed"
             LABEL_COLOR="d73a4a" 
           else
