@@ -16,7 +16,7 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v5.2.0
         env:
           SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.84.172.12:9000
+          SONAR_HOST_URL: http://54.198.91.154:9000
         with:
           args: >
             -Dsonar.projectKey=scrapping_poc
@@ -27,7 +27,7 @@ jobs:
       - name: Fetch SonarQube metrics
         env:
           SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.84.172.12:9000
+          SONAR_HOST_URL: http://54.198.91.154:9000
         id: sonarqube
         run: |
           echo "Fetching SonarQube metrics..."
