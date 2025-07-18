@@ -37,10 +37,12 @@ jobs:
           echo "SonarQube raw response $RESPONSE"
           
           ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
+          NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .value // "UNKNOWN"')
 
 
           echo "Parsed metrics:"
           echo "ALERT_STATUS=$ALERT_STATUS"
+          echo "NEW_ISSUES=$NEW_ISSUES"
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
 
