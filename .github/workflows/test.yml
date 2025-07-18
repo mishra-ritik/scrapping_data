@@ -12,22 +12,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Code Analysis
-        uses: sonarsource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.198.91.154:9000
-        with:
-          args: >
-            -Dsonar.projectKey=scrapping_poc
-            -Dsonar.sources=.
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
-            -Dsonar.login=${{ env.SONAR_TOKEN }}
+      # - name: Run Code Analysis
+      #   uses: sonarsource/sonarqube-scan-action@v5.2.0
+      #   env:
+      #     SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
+      #     SONAR_HOST_URL: http://54.198.91.154:9000
+      #   with:
+      #     args: >
+      #       -Dsonar.projectKey=scrapping_poc
+      #       -Dsonar.sources=.
+      #       -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
+      #       -Dsonar.login=${{ env.SONAR_TOKEN }}
 
       - name: Fetch SonarQube metrics
         env:
-          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.198.91.154:9000
+          SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
+          SONAR_HOST_URL: https://sonarqube.paltechops.org
         id: sonarqube
         run: |
           echo "Fetching SonarQube metrics..."
@@ -45,38 +45,38 @@ jobs:
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
 
   
-      - name: Label PR based on SonarQube result
-        run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+      # - name: Label PR based on SonarQube result
+      #   run: |
+      #     PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
-            LABEL_NAME="sonarqube_failed"
-            LABEL_COLOR="d73a4a" 
-          else
-            LABEL_NAME="sonarqube_passed"
-            LABEL_COLOR="0e8a16"  
-          fi
+      #     if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
+      #       LABEL_NAME="sonarqube_failed"
+      #       LABEL_COLOR="d73a4a" 
+      #     else
+      #       LABEL_NAME="sonarqube_passed"
+      #       LABEL_COLOR="0e8a16"  
+      #     fi
 
-          LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
+      #     LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
 
-          curl -s -X PATCH "$LABEL_API_URL" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" \
-            || \
-          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
+      #     curl -s -X PATCH "$LABEL_API_URL" \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Content-Type: application/json" \
+      #       -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" \
+      #       || \
+      #     curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Content-Type: application/json" \
+      #       -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
 
-          for label in sonarqube_failed sonarqube_passed; do
-            curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
-          done
+      #     for label in sonarqube_failed sonarqube_passed; do
+      #       curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
+      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
+      #     done
 
-          # Apply the current label
-          curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "$(jq -n --arg label "$LABEL_NAME" '[$label]')"
+      #     # Apply the current label
+      #     curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       -H "Content-Type: application/json" \
+      #       -d "$(jq -n --arg label "$LABEL_NAME" '[$label]')"
 
