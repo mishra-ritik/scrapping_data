@@ -37,7 +37,7 @@ jobs:
           echo "SonarQube raw response $RESPONSE"
           
           ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-          NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .value // "UNKNOWN"')
+          NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
 
 
           echo "Parsed metrics:"
