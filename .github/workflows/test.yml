@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "Fetching SonarQube metrics..."
           RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=buzz-api-main_new&metricKeys=alert_status")
+            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=buzz-api-main_new&metricKeys=alert_status,new_violations,new_duplicated_lines_density,new_security_hotspots")
           
           echo "SonarQube raw response $RESPONSE"
           
