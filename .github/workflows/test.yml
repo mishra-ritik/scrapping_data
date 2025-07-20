@@ -48,40 +48,77 @@ jobs:
           echo "DUPLICATIONS:$DUPLICATIONS"
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
+          echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
+          echo "DUPLICATIONS=$DUPLICATIONS" >> $GITHUB_ENV
 
   
-      # - name: Label PR based on SonarQube result
-      #   run: |
-      #     PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+      - name: Label PR based on SonarQube result
+        run: |
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-      #     if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
-      #       LABEL_NAME="sonarqube_failed"
-      #       LABEL_COLOR="d73a4a" 
-      #     else
-      #       LABEL_NAME="sonarqube_passed"
-      #       LABEL_COLOR="0e8a16"  
-      #     fi
+          # Function to create or update label
+          manage_label() {
+            local label_name=$1
+            local label_color=$2
+            LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$label_name"
 
-      #     LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$LABEL_NAME"
+            curl -s -X PATCH "$LABEL_API_URL" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')" \
+              || \
+            curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')"
+          }
 
-      #     curl -s -X PATCH "$LABEL_API_URL" \
-      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-      #       -H "Content-Type: application/json" \
-      #       -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" \
-      #       || \
-      #     curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
-      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-      #       -H "Content-Type: application/json" \
-      #       -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
+          # Function to apply label to PR
+          apply_label() {
+            local label=$1
+            curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg label "$label" '[$label]')"
+          }
 
-      #     for label in sonarqube_failed sonarqube_passed; do
-      #       curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
-      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
-      #     done
+          # Function to remove previous labels if needed
+          remove_labels() {
+            for label in "$@"; do
+              curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
+                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
+            done
+          }
 
-      #     # Apply the current label
-      #     curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
-      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-      #       -H "Content-Type: application/json" \
-      #       -d "$(jq -n --arg label "$LABEL_NAME" '[$label]')"
+          ## 1. SonarQube result label
+          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+            SONAR_LABEL="sonarqube_failed"
+            SONAR_COLOR="d73a4a"
+          else
+            SONAR_LABEL="sonarqube_passed"
+            SONAR_COLOR="0e8a16"
+          fi
+
+          manage_label "$SONAR_LABEL" "$SONAR_COLOR"
+          remove_labels sonarqube_failed sonarqube_passed
+          apply_label "$SONAR_LABEL"
+
+          ## 2. new_issues_found - always applied
+          if [[ "${{ env.NEW_ISSUES }}" != "0" ]]; then
+            ISSUE_COLOR="f9d423" # yellow
+          else
+            ISSUE_COLOR="c0c0c0" # gray
+          fi
+          manage_label "new_issues_found" "$ISSUE_COLOR"
+          apply_label "new_issues_found"
+
+          ## 3. duplication_found - always applied
+          if [[ "${{ env.DUPLICATIONS }}" != "0.0" ]]; then
+            DUP_COLOR="fb8c00" # orange
+          else
+            DUP_COLOR="c0c0c0" # gray
+          fi
+          manage_label "duplication_found" "$DUP_COLOR"
+          apply_label "duplication_found"
+
 
