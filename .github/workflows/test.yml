@@ -100,7 +100,7 @@ jobs:
           else
             SONAR_LABEL="sonarqube_passed"
             SONAR_COLOR="0e8a16" # green
-            PARAMS_COLOR="c0c0c0" # grey
+            PARAMS_COLOR="f9d423" # yellow
           fi
 
           manage_label "$SONAR_LABEL" "$SONAR_COLOR"
@@ -110,14 +110,9 @@ jobs:
           manage_label "issues:${{ env.NEW_ISSUES }}" "$PARAMS_COLOR"
           apply_label "issues:${{ env.NEW_ISSUES }} "
 
-          # combined label to save the space
-          COMBINED_LABEL="i_${{ env.NEW_ISSUES }}_d_${{ env.DUPLICATIONS }}"
-          COMBINED_COLOR="1e90ff"  
-          manage_label "$COMBINED_LABEL" "$COMBINED_COLOR"
-          apply_label "$COMBINED_LABEL"
-
           manage_label "duplications:${{ env.DUPLICATIONS }}" "$PARAMS_COLOR"
           apply_label "duplications:${{ env.DUPLICATIONS }}"
+          
           manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAMS_COLOR"
           apply_label "security:${{ env.SECURITY_HOTSPOTS }}"
           
