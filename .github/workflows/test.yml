@@ -109,15 +109,13 @@ jobs:
           else
             ISSUE_COLOR="c0c0c0" # gray
           fi
-          manage_label "new_issues_found_${{ env.NEW_ISSUES }}" "$ISSUE_COLOR"
+          manage_label "issues:${{ env.NEW_ISSUES }}" "$ISSUE_COLOR"
           echo "Hello... ${{ env.NEW_ISSUES }}"
-          apply_label "new_issues_found_${{ env.NEW_ISSUES }} "
-          apply_label "i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
-          echo "Hello --- i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
+          apply_label "issues:${{ env.NEW_ISSUES }} "
 
+          # combined label to save the space
           COMBINED_LABEL="i_${{ env.NEW_ISSUES }}_d_${{ env.DUPLICATIONS }}"
           COMBINED_COLOR="1e90ff"  
-
           manage_label "$COMBINED_LABEL" "$COMBINED_COLOR"
           apply_label "$COMBINED_LABEL"
 
@@ -127,7 +125,7 @@ jobs:
           else
             DUP_COLOR="c0c0c0" # gray
           fi
-          manage_label "duplication_found_${{ env.DUPLICATIONS }}" "$DUP_COLOR"
-          apply_label "duplication_found_${{ env.DUPLICATIONS }}"
+          manage_label "duplications:${{ env.DUPLICATIONS }}" "$DUP_COLOR"
+          apply_label "duplications:${{ env.DUPLICATIONS }}"
 
 
