@@ -46,7 +46,7 @@ jobs:
           echo "ALERT_STATUS=$ALERT_STATUS"
           echo "NEW_ISSUES=$NEW_ISSUES"
           echo "DUPLICATIONS:$DUPLICATIONS"
-          echo "SECURITY_HOTSPOTS:$SECURITY_HOTSPOTS"
+          echo "SECURITY_HOTSPOTS_sh:$SECURITY_HOTSPOTS"
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
           echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
