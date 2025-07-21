@@ -95,15 +95,19 @@ jobs:
           ## 1. SonarQube result label
           if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
             SONAR_LABEL="sonarqube_failed"
-            SONAR_COLOR="d73a4a"
+            SONAR_COLOR="d73a4a" # red
+            PARAMS_COLOR="f9d423" # yellow
           else
             SONAR_LABEL="sonarqube_passed"
-            SONAR_COLOR="0e8a16"
+            SONAR_COLOR="0e8a16" # green
+            PARAMS_COLOR="c0c0c0" # grey
           fi
 
           manage_label "$SONAR_LABEL" "$SONAR_COLOR"
           remove_labels sonarqube_failed sonarqube_passed
           apply_label "$SONAR_LABEL"
+
+
 
           ## 2. new_issues_found - always applied
           if [[ "${{ env.NEW_ISSUES }}" != "0" ]]; then
@@ -111,7 +115,7 @@ jobs:
           else
             ISSUE_COLOR="c0c0c0" # gray
           fi
-          manage_label "issues:${{ env.NEW_ISSUES }}" "$ISSUE_COLOR"
+          manage_label "issues:${{ env.NEW_ISSUES }}" "$PARAMS_COLOR"
           echo "Hello... ${{ env.NEW_ISSUES }}"
           apply_label "issues:${{ env.NEW_ISSUES }} "
 
@@ -127,9 +131,9 @@ jobs:
           else
             DUP_COLOR="c0c0c0" # gray
           fi
-          manage_label "duplications:${{ env.DUPLICATIONS }}" "$DUP_COLOR"
+          manage_label "duplications:${{ env.DUPLICATIONS }}" "$PARAMS_COLOR"
           apply_label "duplications:${{ env.DUPLICATIONS }}"
-          manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$DUP_COLOR"
+          manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAMS_COLOR"
           apply_label "security:${{ env.SECURITY_HOTSPOTS }}"
           
 
