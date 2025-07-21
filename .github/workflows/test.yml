@@ -24,101 +24,101 @@ jobs:
       #       -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
       #       -Dsonar.login=${{ env.SONAR_TOKEN }}
 
-      - name: Fetch SonarQube metrics
-        env:
-          SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
-          SONAR_HOST_URL: https://sonarqube.paltechops.org
-        id: sonarqube
-        run: |
-          echo "Fetching SonarQube metrics..."
-          RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=buzz-api-main_new&metricKeys=alert_status,new_violations,new_duplicated_lines_density,new_security_hotspots")
+      # - name: Fetch SonarQube metrics
+      #   env:
+      #     SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
+      #     SONAR_HOST_URL: https://sonarqube.paltechops.org
+      #   id: sonarqube
+      #   run: |
+      #     echo "Fetching SonarQube metrics..."
+      #     RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
+      #       "${{ env.SONAR_HOST_URL }}/api/measures/component?component=buzz-api-main_new&metricKeys=alert_status,new_violations,new_duplicated_lines_density,new_security_hotspots")
           
-          echo "SonarQube raw response $RESPONSE"
+      #     echo "SonarQube raw response $RESPONSE"
           
-          ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-          NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
-          DUPLICATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
-          SECURITY_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
+      #     ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
+      #     NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
+      #     DUPLICATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
+      #     SECURITY_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
 
 
-          echo "Parsed metrics:"
-          echo "ALERT_STATUS=$ALERT_STATUS"
-          echo "NEW_ISSUES=$NEW_ISSUES"
-          echo "DUPLICATIONS:$DUPLICATIONS"
-          echo "SECURITY_HOTSPOTS:$SECURITY_HOTSPOTS"
+      #     echo "Parsed metrics:"
+      #     echo "ALERT_STATUS=$ALERT_STATUS"
+      #     echo "NEW_ISSUES=$NEW_ISSUES"
+      #     echo "DUPLICATIONS:$DUPLICATIONS"
+      #     echo "SECURITY_HOTSPOTS:$SECURITY_HOTSPOTS"
 
-          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
-          echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
-          echo "DUPLICATIONS=$DUPLICATIONS" >> $GITHUB_ENV
-          echo "SECURITY_HOTSPOTS=$SECURITY_HOTSPOTS" >> $GITHUB_ENV
+      #     echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
+      #     echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
+      #     echo "DUPLICATIONS=$DUPLICATIONS" >> $GITHUB_ENV
+      #     echo "SECURITY_HOTSPOTS=$SECURITY_HOTSPOTS" >> $GITHUB_ENV
 
   
       - name: Label PR based on SonarQube result
         run: |
-          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          # PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           pr_no = ${{ github.event.pull_request.number }}
 
-          echo "PR_NUMBER: ${{PR_NUMBER}}"
-          echo "pr_no: ${{pr_no}}"
+          #echo "PR_NUMBER: ${{PR_NUMBER}}"
+          echo "pr_no: $pr_no"
 
           # Function to create or update label
-          manage_label() {
-            local label_name=$1
-            local label_color=$2
-            LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$label_name"
+          # manage_label() {
+          #   local label_name=$1
+          #   local label_color=$2
+          #   LABEL_API_URL="https://api.github.com/repos/${{ github.repository }}/labels/$label_name"
 
-            curl -s -X PATCH "$LABEL_API_URL" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')" \
-              || \
-            curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')"
-          }
+          #   curl -s -X PATCH "$LABEL_API_URL" \
+          #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          #     -H "Content-Type: application/json" \
+          #     -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')" \
+          #     || \
+          #   curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/labels" \
+          #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          #     -H "Content-Type: application/json" \
+          #     -d "$(jq -n --arg name "$label_name" --arg color "$label_color" '{name: $name, color: $color}')"
+          # }
 
-          # Function to apply label to PR
-          apply_label() {
-            local label=$1
-            curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d "$(jq -n --arg label "$label" '[$label]')"
-          }
+          # # Function to apply label to PR
+          # apply_label() {
+          #   local label=$1
+          #   curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
+          #     -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          #     -H "Content-Type: application/json" \
+          #     -d "$(jq -n --arg label "$label" '[$label]')"
+          # }
 
-          # Function to remove previous labels if needed
-          remove_labels() {
-            for label in "$@"; do
-              curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
-                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
-            done
-          }
+          # # Function to remove previous labels if needed
+          # remove_labels() {
+          #   for label in "$@"; do
+          #     curl -s -X DELETE "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels/$label" \
+          #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
+          #   done
+          # }
 
-          ## 1. SonarQube result label
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
-            SONAR_LABEL="sonarqube_failed"
-            SONAR_COLOR="d73a4a" # red
-            PARAMS_COLOR="f9d423" # yellow
-          else
-            SONAR_LABEL="sonarqube_passed"
-            SONAR_COLOR="0e8a16" # green
-            PARAMS_COLOR="f9d423" # yellow
-          fi
+          # ## 1. SonarQube result label
+          # if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          #   SONAR_LABEL="sonarqube_failed"
+          #   SONAR_COLOR="d73a4a" # red
+          #   PARAMS_COLOR="f9d423" # yellow
+          # else
+          #   SONAR_LABEL="sonarqube_passed"
+          #   SONAR_COLOR="0e8a16" # green
+          #   PARAMS_COLOR="f9d423" # yellow
+          # fi
 
-          manage_label "$SONAR_LABEL" "$SONAR_COLOR"
-          remove_labels sonarqube_failed sonarqube_passed
-          apply_label "$SONAR_LABEL"
+          # manage_label "$SONAR_LABEL" "$SONAR_COLOR"
+          # remove_labels sonarqube_failed sonarqube_passed
+          # apply_label "$SONAR_LABEL"
 
-          manage_label "issues:${{ env.NEW_ISSUES }}" "$PARAMS_COLOR"
-          apply_label "issues:${{ env.NEW_ISSUES }} "
+          # manage_label "issues:${{ env.NEW_ISSUES }}" "$PARAMS_COLOR"
+          # apply_label "issues:${{ env.NEW_ISSUES }} "
 
-          manage_label "duplications:${{ env.DUPLICATIONS }}" "$PARAMS_COLOR"
-          apply_label "duplications:${{ env.DUPLICATIONS }}"
+          # manage_label "duplications:${{ env.DUPLICATIONS }}" "$PARAMS_COLOR"
+          # apply_label "duplications:${{ env.DUPLICATIONS }}"
           
-          manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAMS_COLOR"
-          apply_label "security:${{ env.SECURITY_HOTSPOTS }}"
+          # manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAMS_COLOR"
+          # apply_label "security:${{ env.SECURITY_HOTSPOTS }}"
           
 
 
