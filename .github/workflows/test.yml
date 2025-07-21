@@ -58,8 +58,8 @@ jobs:
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PR:$PR_NUMBER"
-          echo "Hello.. Jee"
-          #pr_no = ${{ github.event.pull_request.number }}
+          echo "Hello.."
+          # pr_no = ${{ github.event.pull_request.number }}
 
           # Function to create or update label
           manage_label() {
@@ -84,7 +84,7 @@ jobs:
             curl -s -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Content-Type: application/json" \
-              -d "$(jq -n --arg label  '[$label]')"
+              -d "$(jq -n --arg label "$label")"
           }
 
           # Function to remove previous labels if needed
