@@ -110,7 +110,7 @@ jobs:
             ISSUE_COLOR="c0c0c0" # gray
           fi
           manage_label "new_issues_found= ${{ env.NEW_ISSUES }}" "$ISSUE_COLOR"
-          apply_label "new_issues_found"
+          apply_label "new_issues_found= ${{ env.NEW_ISSUES }} "
 
           ## 3. duplication_found - always applied
           if [[ "${{ env.DUPLICATIONS }}" != "0.0" ]]; then
