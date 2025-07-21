@@ -107,16 +107,7 @@ jobs:
           remove_labels sonarqube_failed sonarqube_passed
           apply_label "$SONAR_LABEL"
 
-
-
-          ## 2. new_issues_found - always applied
-          if [[ "${{ env.NEW_ISSUES }}" != "0" ]]; then
-            ISSUE_COLOR="f9d423" # yellow
-          else
-            ISSUE_COLOR="c0c0c0" # gray
-          fi
           manage_label "issues:${{ env.NEW_ISSUES }}" "$PARAMS_COLOR"
-          echo "Hello... ${{ env.NEW_ISSUES }}"
           apply_label "issues:${{ env.NEW_ISSUES }} "
 
           # combined label to save the space
@@ -125,12 +116,6 @@ jobs:
           manage_label "$COMBINED_LABEL" "$COMBINED_COLOR"
           apply_label "$COMBINED_LABEL"
 
-          ## 3. duplication_found - always applied
-          if [[ "${{ env.DUPLICATIONS }}" != "0.0" ]]; then
-            DUP_COLOR="fb8c00" # orange
-          else
-            DUP_COLOR="c0c0c0" # gray
-          fi
           manage_label "duplications:${{ env.DUPLICATIONS }}" "$PARAMS_COLOR"
           apply_label "duplications:${{ env.DUPLICATIONS }}"
           manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAMS_COLOR"
