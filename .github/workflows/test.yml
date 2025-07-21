@@ -85,6 +85,7 @@ jobs:
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Content-Type: application/json" \
               -d "$(jq -n --arg label "$label" '[$label]')"
+            echo "label: $label"
           }
 
           # Function to remove previous labels if needed
