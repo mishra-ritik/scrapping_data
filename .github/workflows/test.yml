@@ -58,6 +58,7 @@ jobs:
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PR:$PR_NUMBER"
+          echo "Hello.."
 
           # Function to create or update label
           manage_label() {
