@@ -113,6 +113,7 @@ jobs:
           echo "Hello... ${{ env.NEW_ISSUES }}"
           apply_label "new_issues_found_${{ env.NEW_ISSUES }} "
           apply_label "i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
+          echo "i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
 
           ## 3. duplication_found - always applied
           if [[ "${{ env.DUPLICATIONS }}" != "0.0" ]]; then
