@@ -115,8 +115,8 @@ jobs:
           apply_label "i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
           echo "Hello --- i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
 
-          COMBINED_LABEL="i:${{ env.NEW_ISSUES }},d:${{ env.DUPLICATIONS }}"
-          COMBINED_COLOR="1e90ff"  # Dodger blue
+          COMBINED_LABEL="i_${{ env.NEW_ISSUES }}_d_${{ env.DUPLICATIONS }}"
+          COMBINED_COLOR="1e90ff"  
 
           manage_label "$COMBINED_LABEL" "$COMBINED_COLOR"
           apply_label "$COMBINED_LABEL"
