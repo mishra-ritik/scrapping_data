@@ -46,10 +46,12 @@ jobs:
           echo "ALERT_STATUS=$ALERT_STATUS"
           echo "NEW_ISSUES=$NEW_ISSUES"
           echo "DUPLICATIONS:$DUPLICATIONS"
+          echo:"SECURITY_HOTSPOTS:$SECURITY_HOTSPOTS"
 
           echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
           echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
           echo "DUPLICATIONS=$DUPLICATIONS" >> $GITHUB_ENV
+          echo "SECURITY_HOTSPOTS=$SECURITY_HOTSPOTS" >> $GITHUB_ENV
 
   
       - name: Label PR based on SonarQube result
@@ -127,5 +129,7 @@ jobs:
           fi
           manage_label "duplications:${{ env.DUPLICATIONS }}" "$DUP_COLOR"
           apply_label "duplications:${{ env.DUPLICATIONS }}"
+          manage_label "security:${{ env.SECURITY_HOTSPOTS }}" "$DUP_COLOR"
+          apply_label "security:${{ env.SECURITY_HOTSPOTS }}"
 
 
