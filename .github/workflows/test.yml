@@ -57,6 +57,7 @@ jobs:
       - name: Label PR based on SonarQube result
         run: |
           PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PR:$PR_NUMBER"
 
           # Function to create or update label
           manage_label() {
