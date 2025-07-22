@@ -15,11 +15,11 @@ jobs:
       - name: Set Executable Permissions
         run: chmod +x .github/scripts/*.sh
 
-      - name: Fetch SonarQube metrics
-        env:
-          SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
-          SONAR_HOST_URL: https://sonarqube.paltechops.org
-        run: .github/scripts/fetch_sonar_metrics.sh
+      #- name: Fetch SonarQube metrics
+      #  env:
+      #    SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
+      #    SONAR_HOST_URL: https://sonarqube.paltechops.org
+      #  run: .github/scripts/fetch_sonar_metrics.sh
   
       - name: Manage and Apply Labels
         env: 
@@ -36,18 +36,18 @@ jobs:
             SONAR_COLOR="0e8a16" #green
           fi
 
-          .github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
-          .github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed 
+          #.github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
+          #.github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed 
           # .github/scripts/apply_labels.sh "$SONAR_LABEL"
 
-          .github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
-          .github/scripts/remove_labels_by_prefix.sh issues:*
+          #.github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
+          .github/scripts/remove_labels_by_prefix.sh issues:
           # .github/scripts/apply_labels.sh "issues:${{ env.NEW_ISSUES }}"
 
-          .github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
-          .github/scripts/remove_labels_by_prefix.sh duplications
+          #.github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+          #.github/scripts/remove_labels_by_prefix.sh duplications
           # .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
 
-          .github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
-          .github/scripts/remove_labels_by_prefix.sh security
+          #.github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
+          #.github/scripts/remove_labels_by_prefix.sh security
           # .github/scripts/apply_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}"
