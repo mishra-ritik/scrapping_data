@@ -14,4 +14,4 @@ pwd
 ls -al
 echo "Hello...."
 
-# sh ./.github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed
+bash ./.github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed
