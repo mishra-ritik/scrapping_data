@@ -36,9 +36,9 @@ jobs:
             SONAR_COLOR="0e8a16" #green
           fi
 
-          #.github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
-          #.github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed 
-          # .github/scripts/apply_labels.sh "$SONAR_LABEL"
+          .github/scripts/remove_labels.sh sonarqube_failed sonarqube_passed 
+          .github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
+          .github/scripts/apply_labels.sh "$SONAR_LABEL"
 
           #.github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
           # .github/scripts/remove_labels_by_prefix.sh issues
