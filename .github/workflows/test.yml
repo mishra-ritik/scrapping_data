@@ -26,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
         run: |
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             SONAR_LABEL="sonarqube_failed"
             SONAR_COLOR="d73a4a"
             PARAM_COLOR="f9d423"
