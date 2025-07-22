@@ -27,7 +27,7 @@ echo "Looking for labels with prefix: $PREFIX:"
 
 IFS=$'\n' # Safely split by lines
 for label in $LABELS; do
-  echo "Checking label: '$label'""
+  echo "Checking label: '$label'"
   if [[ "$label" == *"$PREFIX"* ]]; then
     echo "Removing label:"
   fi
