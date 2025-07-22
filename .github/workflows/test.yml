@@ -48,6 +48,6 @@ jobs:
           .github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
           .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
 
-          #.github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
           .github/scripts/remove_labels_by_prefix.sh security
-          # .github/scripts/apply_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}"
+          .github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
+          .github/scripts/apply_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}"
