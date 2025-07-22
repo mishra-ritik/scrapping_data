@@ -26,6 +26,7 @@ LABELS=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
 echo "Labels found: $LABELS"
 
 for label in $LABELS; do
+  echo "Hii..... $label ---------- $PREFIX "
   if [[ "$label" == "$PREFIX"* ]]; then
     echo "Removing label: $label"
     curl -s -X DELETE \
