@@ -26,7 +26,7 @@ LABELS=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
 IFS=$'\n' # Safely split by lines
 for label in $LABELS; do
   echo "Checking label: '$label'"
-  if [[ "$label" == $PREFIX:* ]]; then
+  if [[ "$label" == "$PREFIX:"* ]]; then
     echo "Removing label: $label"
     ENCODED_LABEL=$(echo "$label" | jq -sRr @uri)
     curl -s -X DELETE \
