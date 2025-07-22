@@ -40,13 +40,13 @@ jobs:
           .github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
           .github/scripts/apply_labels.sh "$SONAR_LABEL"
 
-          #.github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
-          # .github/scripts/remove_labels_by_prefix.sh issues
-          # .github/scripts/apply_labels.sh "issues:${{ env.NEW_ISSUES }}"
+          .github/scripts/remove_labels_by_prefix.sh issues
+          .github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
+          .github/scripts/apply_labels.sh "issues:${{ env.NEW_ISSUES }}"
 
-          #.github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
-          #.github/scripts/remove_labels_by_prefix.sh duplications
-          # .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
+          .github/scripts/remove_labels_by_prefix.sh duplications
+          .github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+          .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
 
           #.github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
           .github/scripts/remove_labels_by_prefix.sh security
