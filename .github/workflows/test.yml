@@ -95,16 +95,14 @@ jobs:
                 -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" || true
             done
           }
-
+          PARAMS_COLOR="f9d423" # yellow
           ## 1. SonarQube result label
           if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
             SONAR_LABEL="sonarqube_failed"
             SONAR_COLOR="d73a4a" # red
-            PARAMS_COLOR="f9d423" # yellow
           else
             SONAR_LABEL="sonarqube_passed"
             SONAR_COLOR="0e8a16" # green
-            PARAMS_COLOR="f9d423" # yellow
           fi
 
           manage_label "$SONAR_LABEL" "$SONAR_COLOR"
