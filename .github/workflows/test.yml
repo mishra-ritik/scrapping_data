@@ -12,47 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Run Code Analysis
-      #   uses: sonarsource/sonarqube-scan-action@v5.2.0
-      #   env:
-      #     SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-      #     SONAR_HOST_URL: http://54.198.91.154:9000
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=scrapping_poc
-      #       -Dsonar.sources=.
-      #       -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
-      #       -Dsonar.login=${{ env.SONAR_TOKEN }}
+      - name: Set Executable Permissions
+        run: chmod +x .github/scripts/*.sh
 
       - name: Fetch SonarQube metrics
         env:
           SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
           SONAR_HOST_URL: https://sonarqube.paltechops.org
-        id: sonarqube
-        run: |
-          echo "Fetching SonarQube metrics..."
-          RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=buzz-api-main_new&metricKeys=alert_status,new_violations,new_duplicated_lines_density,new_security_hotspots")
-          
-          echo "SonarQube raw response $RESPONSE"
-          
-          ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-          NEW_ISSUES=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_violations") | .period.value // "0"')
-          DUPLICATIONS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_duplicated_lines_density") | .period.value // "0.0"')
-          SECURITY_HOTSPOTS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="new_security_hotspots") | .period.value // "0"')
-
-
-          echo "Parsed metrics:"
-          echo "ALERT_STATUS=$ALERT_STATUS"
-          echo "NEW_ISSUES=$NEW_ISSUES"
-          echo "DUPLICATIONS:$DUPLICATIONS"
-          echo "SECURITY_HOTSPOTS:$SECURITY_HOTSPOTS"
-
-          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
-          echo "NEW_ISSUES=$NEW_ISSUES" >> $GITHUB_ENV
-          echo "DUPLICATIONS=$DUPLICATIONS" >> $GITHUB_ENV
-          echo "SECURITY_HOTSPOTS=$SECURITY_HOTSPOTS" >> $GITHUB_ENV
-
+        run: .github/scripts/fetch_sonar_metrics.sh
   
       - name: Label PR based on SonarQube result
         run: |
