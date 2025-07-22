@@ -30,5 +30,7 @@ for label in $LABELS; do
   echo "Checking label: '$label'"
   if [[ "$label" == *"$PREFIX"* ]]; then
     echo "Removing label:"
+  else
+    echo "Not Removing"
   fi
 done
