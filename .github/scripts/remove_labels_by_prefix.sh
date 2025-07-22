@@ -5,7 +5,7 @@ set -e
 PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 PREFIX=$1
 
-echo "🔍 Looking for labels with prefix: $PREFIX"
+echo "Looking for labels with prefix: $PREFIX"
 
 LABELS=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels" \
