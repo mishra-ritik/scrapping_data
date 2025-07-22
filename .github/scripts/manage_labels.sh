@@ -9,3 +9,5 @@ curl -s -X POST "https://api.github.com/repos/${GITHUB_REPOSITORY}/labels" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
+
+sh ./remove_labels.sh sonarqube_failed sonarqube_passed
