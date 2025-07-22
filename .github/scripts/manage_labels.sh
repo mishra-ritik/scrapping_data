@@ -11,6 +11,7 @@ curl -s -X POST "https://api.github.com/repos/${GITHUB_REPOSITORY}/labels" \
   -d "$(jq -n --arg name "$LABEL_NAME" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')"
 
 pwd
+ls -al
 echo "Hello...."
 
 # sh ./remove_labels.sh sonarqube_failed sonarqube_passed
