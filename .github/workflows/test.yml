@@ -15,11 +15,11 @@ jobs:
       - name: Set Executable Permissions
         run: chmod +x .github/scripts/*.sh
 
-      #- name: Fetch SonarQube metrics
-      #  env:
-      #    SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
-      #    SONAR_HOST_URL: https://sonarqube.paltechops.org
-      #  run: .github/scripts/fetch_sonar_metrics.sh
+      - name: Fetch SonarQube metrics
+        env:
+          SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
+          SONAR_HOST_URL: https://sonarqube.paltechops.org
+        run: .github/scripts/fetch_sonar_metrics.sh
   
       - name: Manage and Apply Labels
         env: 
