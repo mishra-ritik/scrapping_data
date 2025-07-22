@@ -26,14 +26,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
         run: |
+          PARAM_COLOR="f9d423" #yellow
           if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             SONAR_LABEL="sonarqube_failed"
-            SONAR_COLOR="d73a4a"
-            PARAM_COLOR="f9d423"
+            SONAR_COLOR="d73a4a" #green
           else
             SONAR_LABEL="sonarqube_passed"
-            SONAR_COLOR="0e8a16"
-            PARAM_COLOR="f9d423"
+            SONAR_COLOR="0e8a16" #red
           fi
 
           .github/scripts/manage_labels.sh "$SONAR_LABEL" "$SONAR_COLOR"
