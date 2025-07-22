@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 LABEL_NAME=$1
 LABEL_COLOR=$2
 
