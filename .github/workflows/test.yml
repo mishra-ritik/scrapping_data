@@ -42,8 +42,8 @@ jobs:
           .github/scripts/manage_labels.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
           .github/scripts/apply_labels.sh "issues:${{ env.NEW_ISSUES }}"
 
-          # .github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
-          # .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
+          .github/scripts/manage_labels.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+          .github/scripts/apply_labels.sh "duplications:${{ env.DUPLICATIONS }}"
 
           .github/scripts/manage_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
           .github/scripts/apply_labels.sh "security:${{ env.SECURITY_HOTSPOTS }}"
