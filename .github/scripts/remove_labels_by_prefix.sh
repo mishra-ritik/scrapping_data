@@ -29,7 +29,7 @@ IFS=$'\n' # Safely split by lines
 for label in $LABELS; do
   echo "Checking label: '$label'"
   if [[ "$label" == *"$PREFIX"* ]]; then
-    echo "Removing label:"
+    echo "Removing label: $label and $PREFIX--)"
   else
     echo "Not Removing $label and $PREFIX--)"
   fi
