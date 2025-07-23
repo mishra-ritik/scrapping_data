@@ -3,6 +3,9 @@
 LABEL_NAME=$1
 LABEL_COLOR=$2
 
+echo "Hello..........."
+pwd
+
 PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
 LABEL_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/labels"
