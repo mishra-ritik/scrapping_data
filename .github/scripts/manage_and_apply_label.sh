@@ -5,6 +5,7 @@ LABEL_COLOR=$2
 
 echo "Hello..........."
 pwd
+echo pwd/.github/scripts
 
 PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
