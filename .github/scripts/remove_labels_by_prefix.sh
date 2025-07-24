@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+
 
 PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 PREFIX=$1
