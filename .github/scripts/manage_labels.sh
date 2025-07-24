@@ -12,7 +12,7 @@ echo "Managing label: $FINAL_LABEL with color: $LABEL_COLOR"
 
 PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-# Remove existing labels with the same prefix
+
 echo "Fetching and removing existing labels with prefix: $LABEL_PREFIX"
 
 LABELS=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
@@ -29,17 +29,15 @@ for label in $LABELS; do
   fi
 done
 
-# Create label if it doesn't exist and apply it
+
 LABEL_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/labels"
 PR_LABELS_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels"
 
-# Create label (ignore error if already exists)
 curl -s -X POST "$LABEL_API_URL" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "$(jq -n --arg name "$FINAL_LABEL" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" || true
 
-# Apply label to PR
 curl -s -X POST "$PR_LABELS_API_URL" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
