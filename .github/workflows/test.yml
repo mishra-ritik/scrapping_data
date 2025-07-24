@@ -36,14 +36,16 @@ jobs:
             SONAR_COLOR="0e8a16" #green
           fi
 
-          .github/scripts/remove_labels_by_prefix.sh sonarqube  sonarqube
+          .github/scripts/manage_labels.sh "sonarqube" "$SONAR_LABEL" "$SONAR_COLOR"
+
+          # .github/scripts/remove_labels_by_prefix.sh sonarqube  sonarqube
           # .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
 
-          .github/scripts/remove_labels_by_prefix.sh issues
+          # .github/scripts/remove_labels_by_prefix.sh issues
           # .github/scripts/manage_and_apply_label.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
 
-          .github/scripts/remove_labels_by_prefix.sh duplications
+          # .github/scripts/remove_labels_by_prefix.sh duplications
           # .github/scripts/manage_and_apply_label.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
 
-          .github/scripts/remove_labels_by_prefix.sh security
+          # .github/scripts/remove_labels_by_prefix.sh security
           # .github/scripts/manage_and_apply_label.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
