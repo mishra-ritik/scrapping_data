@@ -19,6 +19,8 @@ LABELS=$(curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels" \
   | jq -r '.[].name')
 
+echo "-------------- $LABELS -----------------"
+
 IFS=$'\n'
 for label in $LABELS; do
   if [[ "$label" == "$LABEL_PREFIX:"* ]]; then
@@ -29,7 +31,7 @@ for label in $LABELS; do
   fi
 done
 
-
+echo "hello"
 LABEL_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/labels"
 PR_LABELS_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/labels"
 
