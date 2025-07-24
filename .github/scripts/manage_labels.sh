@@ -38,11 +38,11 @@ PR_LABELS_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR
 curl -s -X POST "$LABEL_API_URL" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "$(jq -n --arg name "$FINAL_LABEL" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" || true
+  -d "$(jq -n --arg name "SQ_$FINAL_LABEL" --arg color "$LABEL_COLOR" '{name: $name, color: $color}')" || true
 
 curl -s -X POST "$PR_LABELS_API_URL" \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "$(jq -n --arg label "$FINAL_LABEL" '[$label]')"
+  -d "$(jq -n --arg label "SQ_$FINAL_LABEL" '[$label]')"
 
 echo "Applied label: $FINAL_LABEL to PR #$PR_NUMBER"
