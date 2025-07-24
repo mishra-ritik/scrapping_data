@@ -28,7 +28,7 @@ jobs:
         
         run: |
           PARAM_COLOR="f9d423" #yellow
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             SONAR_LABEL="sonarqube_failed"
             SONAR_COLOR="d73a4a" #red
           else
@@ -36,8 +36,8 @@ jobs:
             SONAR_COLOR="0e8a16" #green
           fi
 
-          .github/scripts/remove_labels_by_prefix.sh sonarqube_failed sonarqube_passed 
-          # .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
+          .github/scripts/remove_labels_by_prefix.sh sonarqube_passed  sonarqube_failed 
+          .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
 
           .github/scripts/remove_labels_by_prefix.sh issues
           # .github/scripts/manage_and_apply_label.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
