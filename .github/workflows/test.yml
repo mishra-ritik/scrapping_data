@@ -3,7 +3,6 @@ name: Auto comment on Push and Pull Request
 on: 
   pull_request:
     branches: 
-      - main
       - dev
 
 jobs:
@@ -13,48 +12,53 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Code Analysis
-        uses: sonarsource/sonarqube-scan-action@v5.2.0
-        env:
-          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.158.35.213:9000
-        with:
-          args: >
-            -Dsonar.projectKey=scrapping_poc
-            -Dsonar.sources=.
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
-            -Dsonar.login=${{ env.SONAR_TOKEN }}
-            -Dsonar.ws.timeout=300
-            -Dsonar.ce.ws.timeout=300
+      # - name: Set Executable Permissions
+      #   run: chmod +x .github/scripts/*.sh
 
       - name: Fetch SonarQube metrics
         env:
-          SONAR_TOKEN: sqa_acf14b025b0a8a8b841cf761b5267f9fc32fe544
-          SONAR_HOST_URL: http://54.158.35.213:9000
-        id: sonarqube
+          SONAR_TOKEN: sqa_d6528deb2bd094bf1fc06cf85d8edd30f213622f
+          SONAR_HOST_URL: https://sonarqube.paltechops.org
+        run: bash .github/scripts/fetch_sonar_metrics.sh
+  
+      - name: Manage and Apply Labels
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        
         run: |
-          echo "Fetching SonarQube metrics..."
-          RESPONSE=$(curl -s -u "${{ env.SONAR_TOKEN }}:" \
-            "${{ env.SONAR_HOST_URL }}/api/measures/component?component=scrapping_poc&metricKeys=alert_status,new_violations,new_coverage,new_duplicated_lines_density,new_security_hotspots")
-          
-          echo "SonarQube raw response: $RESPONSE"
-          
-          ALERT_STATUS=$(echo "$RESPONSE" | jq -r '.component.measures[] | select(.metric=="alert_status") | .value // "UNKNOWN"')
-
-
-          echo "Parsed metrics:"
-          echo "ALERT_STATUS=$ALERT_STATUS"
-
-          echo "ALERT_STATUS=$ALERT_STATUS" >> $GITHUB_ENV
-
-
-          if [[ "$ALERT_STATUS" == "ERROR" ]]; then
-            echo "SONAR_STATUS_ICON=🚨" >> $GITHUB_ENV
-            echo "SONAR_STATUS_MESSAGE=❌ Quality Gate FAILED" >> $GITHUB_ENV
+          PARAM_COLOR="f9d423" #yellow
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
+            SONAR_LABEL="failed"
+            SONAR_COLOR="d73a4a" #red
           else
-            echo "SONAR_STATUS_ICON=✅" >> $GITHUB_ENV
-            echo "SONAR_STATUS_MESSAGE=🎉 Quality Gate PASSED" >> $GITHUB_ENV
+            SONAR_LABEL="passed"
+            SONAR_COLOR="0e8a16" #green
           fi
+          bash .github/scripts/manage_labels.sh "SQ"
+          bash .github/scripts/manage_labels.sh "sonarqube" "$SONAR_LABEL" "$SONAR_COLOR"
+          bash .github/scripts/manage_labels.sh "issues" "${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
+          bash .github/scripts/manage_labels.sh "duplication" "${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+          bash .github/scripts/manage_labels.sh "security" "${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
 
-      
-      
+
+
+
+
+
+
+
+
+
+
+          # .github/scripts/remove_labels_by_prefix.sh sonarqube  sonarqube
+          # .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
+
+          # .github/scripts/remove_labels_by_prefix.sh issues
+          # .github/scripts/manage_and_apply_label.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
+
+          # .github/scripts/remove_labels_by_prefix.sh duplications
+          # .github/scripts/manage_and_apply_label.sh "duplications:${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+
+          # .github/scripts/remove_labels_by_prefix.sh security
+          # .github/scripts/manage_and_apply_label.sh "security:${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
