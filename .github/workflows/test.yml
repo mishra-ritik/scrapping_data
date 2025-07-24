@@ -37,7 +37,7 @@ jobs:
           fi
 
           .github/scripts/remove_labels_by_prefix.sh sonarqube_failed sonarqube_passed 
-          .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
+          # .github/scripts/manage_and_apply_label.sh "$SONAR_LABEL" "$SONAR_COLOR"
 
           .github/scripts/remove_labels_by_prefix.sh issues
           # .github/scripts/manage_and_apply_label.sh "issues:${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
