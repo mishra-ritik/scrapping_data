@@ -12,8 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Executable Permissions
-        run: chmod +x .github/scripts/*.sh
+      # - name: Set Executable Permissions
+      #   run: chmod +x .github/scripts/*.sh
 
       - name: Fetch SonarQube metrics
         env:
