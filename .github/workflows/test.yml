@@ -28,7 +28,7 @@ jobs:
         
         run: |
           PARAM_COLOR="f9d423" #yellow
-          if [[ "${{ env.ALERT_STATUS }}" == "ERROR" ]]; then
+          if [[ "${{ env.ALERT_STATUS }}" != "ERROR" ]]; then
             SONAR_LABEL="failed"
             SONAR_COLOR="d73a4a" #red
           else
