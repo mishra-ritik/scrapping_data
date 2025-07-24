@@ -37,9 +37,9 @@ jobs:
           fi
 
           bash .github/scripts/manage_labels.sh "sonarqube" "$SONAR_LABEL" "$SONAR_COLOR"
-          .github/scripts/manage_labels.sh "issues" "${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
-          .github/scripts/manage_labels.sh "duplication" "${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
-          .github/scripts/manage_labels.sh "security" "${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
+          bash .github/scripts/manage_labels.sh "issues" "${{ env.NEW_ISSUES }}" "$PARAM_COLOR"
+          bash .github/scripts/manage_labels.sh "duplication" "${{ env.DUPLICATIONS }}" "$PARAM_COLOR"
+          bash .github/scripts/manage_labels.sh "security" "${{ env.SECURITY_HOTSPOTS }}" "$PARAM_COLOR"
 
 
 
